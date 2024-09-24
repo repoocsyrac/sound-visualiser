@@ -1,6 +1,5 @@
 import pygame
 import numpy as np
-
 import soundcard as sc
 
 # Constants
@@ -8,17 +7,16 @@ CHUNK = 1024  # Number of audio samples per frame
 #FORMAT = pyaudio.paInt16  # Audio format (16-bit integer)
 CHANNELS = 1  # Mono audio
 RATE = 44100  # Sampling rate (44.1 kHz)
+WIDTH, HEIGHT = 800, 400 # Window size
 
 # PyAudio object
 #p = pyaudio.PyAudio()
 
-# Soundcard setup: Get the default speaker's loopback
-default_speaker = sc.default_speaker()
-loopback_mic = default_speaker.recorder(samplerate=44100)
+# Soundcard setup: Get the loopback microphone (captures audio from speakers)
+default_mic = sc.get_microphone(sc.default_speaker().name, include_loopback=True)
 
 # Pygame setup
 pygame.init()
-WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Open the microphone stream
