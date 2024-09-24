@@ -40,11 +40,8 @@ with default_mic.recorder(samplerate=RATE) as mic:
         data = mic.record(numframes=CHUNK)
         mono_data = np.mean(data, axis=1)  # Convert to mono if stereo
         
-        # Convert data to numpy array (for FFT)
-        audio_data = np.frombuffer(data, dtype=np.int16)
-        
         # Perform FFT to get frequency data
-        fft_data = np.fft.fft(audio_data)
+        fft_data = np.fft.fft(mono_data)
         
         # Get the magnitude of frequencies (for visualization)
         freq_magnitude = np.abs(fft_data[:CHUNK // 2])  # Use only half of FFT (mirrored)
@@ -74,8 +71,8 @@ with default_mic.recorder(samplerate=RATE) as mic:
         '''
 
         # Draw waveforms
-        for i in range(len(audio_data) - 1):
-            pygame.draw.line(screen, (0, 255, 255), (i, HEIGHT // 2 + audio_data[i] // 50), (i + 1, HEIGHT // 2 + audio_data[i + 1] // 50))
+        for i in range(len(mono_data) - 1):
+            pygame.draw.line(screen, (0, 255, 255), (i, HEIGHT // 2 + mono_data[i] // 50), (i + 1, HEIGHT // 2 + mono_data[i + 1] // 50))
 
         # Update the display
         pygame.display.flip()
