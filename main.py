@@ -15,6 +15,13 @@ WIDTH, HEIGHT = 800, 400 # Window size
 # Soundcard setup: Get the loopback microphone (captures audio from speakers)
 default_mic = sc.get_microphone(sc.default_speaker().name, include_loopback=True)
 
+# Check if loopback is available
+if default_mic is None:
+    print("Loopback microphone not available")
+    quit()
+
+print(f"Using {default_mic.name} for loopback capture")
+
 # Pygame setup
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
