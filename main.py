@@ -54,12 +54,18 @@ while True:
     # Draw bars for each frequency bin
     num_bars = 100  # Number of frequency bins to visualize
     bar_width = WIDTH // num_bars
-
+    '''
     for i in range(num_bars):
         bar_height = int(freq_magnitude[i] / 500)  # Scale the magnitude
         color = (0, 255, 0)  # Green bars
         # Draw the bar
         pygame.draw.rect(screen, color, (i * bar_width, HEIGHT - bar_height, bar_width - 2, bar_height))
+    '''
+
+    # draw circles
+    for i in range(num_bars):
+        radius = int(freq_magnitude[i] / 300)  # Scale radius
+        pygame.draw.circle(screen, (0, 255 - i * 2, i * 2), (WIDTH // 2, HEIGHT // 2), radius, 1)
 
     # Update the display
     pygame.display.flip()
