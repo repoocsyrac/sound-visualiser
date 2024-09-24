@@ -11,6 +11,11 @@ RATE = 44100  # Sampling rate (44.1 kHz)
 # PyAudio object
 p = pyaudio.PyAudio()
 
+# Pygame setup
+pygame.init()
+WIDTH, HEIGHT = 800, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 # Open the microphone stream
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
@@ -20,6 +25,15 @@ stream = p.open(format=FORMAT,
 
 # Infinite loop to capture audio data
 while True:
+    # Handle closing window
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+            quit()
+
     # Read audio chunk
     data = stream.read(CHUNK)
     
@@ -33,3 +47,6 @@ while True:
     freq_magnitude = np.abs(fft_data[:CHUNK // 2])  # Use only half of FFT (mirrored)
 
     print(freq_magnitude)  # Output the frequency data (for testing)
+
+    # Clear the screen
+    screen.fill((0, 0, 0))
