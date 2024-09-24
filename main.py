@@ -26,6 +26,37 @@ print(f"Using {default_mic.name} for loopback capture")
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+# Function to draw waveform
+def draw_waveform(audio_data):
+    screen.fill((0, 0, 0))  # Clear the screen
+
+    audio_data *= 20
+
+    # Scale audio data to fit in the height of the window
+    scaled_data = (audio_data * (HEIGHT / 2)).astype(int) + (HEIGHT // 2)
+    # Clamp values to ensure they stay within the window bounds
+    scaled_data = np.clip(scaled_data, 0, HEIGHT)
+
+    # Create a list of points to plot (x, y)
+    points = [(x, scaled_data[x]) for x in range(len(scaled_data))]
+
+    # Draw lines connecting the points
+    pygame.draw.lines(screen, (0, 255, 0), False, points, 2)
+
+    pygame.display.flip()
+
+# Function to draw bars
+def draw_bars(audio_data):
+    screen.fill((0, 0, 0))  # Clear screen
+    num_bars = 100
+    bar_width = WIDTH // num_bars
+
+    for i in range(num_bars):
+        bar_height = int(freq_magnitude[i] * 1000)  # Scale the magnitude
+        color = (0, 255, 0)  # Green bars
+        pygame.draw.rect(screen, color, (i * bar_width, HEIGHT - bar_height, bar_width - 2, bar_height))
+
+    pygame.display.flip()
 
 # Start capturing audio from the loopback mic
 with default_mic.recorder(samplerate=RATE) as mic:
@@ -48,31 +79,4 @@ with default_mic.recorder(samplerate=RATE) as mic:
 
         print(freq_magnitude)  # Output the frequency data (for testing)
 
-        # Clear the screen
-        screen.fill((0, 0, 0))
-
-        # Draw bars for each frequency bin
-        num_bars = 100  # Number of frequency bins to visualize
-        bar_width = WIDTH // num_bars
-
-        '''
-        for i in range(num_bars):
-            bar_height = int(freq_magnitude[i] / 500)  # Scale the magnitude
-            color = (0, 255, 0)  # Green bars
-            # Draw the bar
-            pygame.draw.rect(screen, color, (i * bar_width, HEIGHT - bar_height, bar_width - 2, bar_height))
-        '''
-
-        '''
-        # draw circles
-        for i in range(num_bars):
-            radius = int(freq_magnitude[i] / 300)  # Scale radius
-            pygame.draw.circle(screen, (0, 255 - i * 2, i * 2), (WIDTH // 2, HEIGHT // 2), radius, 1)
-        '''
-
-        # Draw waveforms
-        for i in range(len(mono_data) - 1):
-            pygame.draw.line(screen, (0, 255, 255), (i, HEIGHT // 2 + mono_data[i] // 50), (i + 1, HEIGHT // 2 + mono_data[i + 1] // 50))
-
-        # Update the display
-        pygame.display.flip()
+        draw_waveform(mono_data)
