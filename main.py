@@ -1,15 +1,20 @@
 import pygame
 import numpy as np
-import pyaudio
+
+import soundcard as sc
 
 # Constants
 CHUNK = 1024  # Number of audio samples per frame
-FORMAT = pyaudio.paInt16  # Audio format (16-bit integer)
+#FORMAT = pyaudio.paInt16  # Audio format (16-bit integer)
 CHANNELS = 1  # Mono audio
 RATE = 44100  # Sampling rate (44.1 kHz)
 
 # PyAudio object
-p = pyaudio.PyAudio()
+#p = pyaudio.PyAudio()
+
+# Soundcard setup: Get the default speaker's loopback
+default_speaker = sc.default_speaker()
+loopback_mic = default_speaker.recorder(samplerate=44100)
 
 # Pygame setup
 pygame.init()
@@ -17,11 +22,13 @@ WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Open the microphone stream
+'''
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
                 rate=RATE,
                 input=True,
                 frames_per_buffer=CHUNK)
+'''
 
 # Infinite loop to capture audio data
 while True:
@@ -29,13 +36,16 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
+            #stream.stop_stream()
+            #stream.close()
+            #p.terminate()
             quit()
 
     # Read audio chunk
-    data = stream.read(CHUNK)
+    #data = stream.read(CHUNK)
+     # Capture audio data from speakers
+    data = loopback_mic.record(numframes=1024)
+    mono_data = np.mean(audio_data, axis=1)  # Convert to mono
     
     # Convert data to numpy array (for FFT)
     audio_data = np.frombuffer(data, dtype=np.int16)
