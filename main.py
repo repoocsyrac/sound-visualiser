@@ -6,7 +6,7 @@ import soundcard as sc
 CHUNK = 1024  # Number of audio samples per frame
 CHANNELS = 1  # Mono audio
 RATE = 44100  # Sampling rate (44.1 kHz)
-WIDTH, HEIGHT = 800, 400 # Window size
+WIDTH, HEIGHT = 1020, 800 # Window size
 
 # Soundcard setup: Get the loopback microphone (captures audio from speakers)
 default_mic = sc.get_microphone(sc.default_speaker().name, include_loopback=True)
@@ -26,7 +26,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 def draw_waveform(audio_data):
     screen.fill((0, 0, 0))  # Clear the screen
 
-    audio_data *= 20
+    audio_data *= 25
 
     # Scale audio data to fit in the height of the window
     scaled_data = (audio_data * (HEIGHT / 2)).astype(int) + (HEIGHT // 2)
@@ -37,7 +37,7 @@ def draw_waveform(audio_data):
     points = [(x, scaled_data[x]) for x in range(len(scaled_data))]
 
     # Draw lines connecting the points
-    pygame.draw.lines(screen, (0, 255, 0), False, points, 2)
+    pygame.draw.lines(screen, (0, 255, 255), False, points, 2)
 
     pygame.display.flip()
 
